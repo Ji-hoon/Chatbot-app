@@ -1,6 +1,8 @@
+
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
+// import './globals.css'
+import { Providers } from '@/components/providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,10 +17,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <h1>HI!</h1>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
