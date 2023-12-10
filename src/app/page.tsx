@@ -6,7 +6,7 @@ import { MemoizedReactMarkdown } from "@/components/shared/Markdown";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 type Chat = {
-    role: "User" | "Assistant";
+    role: "user" | "assistant";
     content: string;
 }
 
@@ -86,8 +86,8 @@ export default function Home() {
               //setMessage((v) => v + decodedValue);
               setMessages([
                 ...messages,
-                {role : 'User', content : question},
-                {role : 'Assistant', content : content}
+                {role : 'user', content : question},
+                {role : 'assistant', content : content}
               ]);
             }
     
@@ -96,16 +96,19 @@ export default function Home() {
 
     return (
         <div className="py-3 px-5">
-            <h3 className="py-3 text-2xl" >GPT에게 질문해보세요.
+            <div className="flex py-4 w-full">
+                <h3 className="text-2xl flex-grow" >GPT에게 질문해보세요.</h3>
                 <button className="bg-gray-800 dark:bg-gray-100 dark:text-gray-800 px-3 py-2 text-sm font-semibold text-white shadow-sm rounded-md" 
                         style={{float:"right"}} 
                         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
                 {theme === "dark" ? "🌞 light모드로 변환" : "🌚 dark모드로 변환"}</button>
-            </h3>
-            <div className="flex">
-                <input className="px-3 py-2 text-sm shadow-sm rounded-md w-1/2 ring-gray-300 dark:ring-gray-900 ring-1 ring-inset"
+            </div>
+            <div className="flex w-full">
+                <input className="px-3 py-2 text-sm shadow-sm rounded-md flex-grow ring-gray-300 dark:ring-gray-900 ring-1 ring-inset disabled:cursor-not-allowed"
                         placeholder="질문을 입력하고 질문하기 버튼을 클릭하세요."
-                        onChange={(e) => handleQuestion(e)} value={question} />
+                        onChange={(e) => handleQuestion(e)} 
+                        value={question} 
+                        disabled={loading}/>
                 <button className="w-20 mx-1 bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm rounded-md disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
                         onClick={postChatAPI} 
                         disabled={!question || loading}>
