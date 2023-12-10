@@ -2,7 +2,6 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState, useMemo } from "react";
-import ReactMarkdown from 'react-markdown';
 import { MemoizedReactMarkdown } from "@/components/shared/Markdown";
 
 type Chat = {
@@ -30,7 +29,7 @@ export default function Home() {
 
     // })() 
 
-    function handleQuestion(e) {
+    function handleQuestion(e:React.ChangeEvent<HTMLInputElement>) {
         setQuestion(e.target.value);
     }
 
@@ -83,22 +82,30 @@ export default function Home() {
     }
 
     return (
-        <>
-        <h3 className="bg-white dark:bg-slate-800 dark:bg-primary">GPT에게 질문해보세요.
-        <button style={{float:"right"}} onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-          {theme === "dark" ? "🌞 light모드로 변환" : "🌚 dark모드로 변환"}
-        </button></h3>
-        <input onChange={(e) => handleQuestion(e)} value={question} />
-        <button onClick={postChatAPI} disabled={!question}>질문!</button>
-        <p>
+        <div className="py-3 px-5">
+            <h3 className="py-3 text-2xl" >GPT에게 질문해보세요.
+                <button className="bg-gray-800 dark:bg-gray-100 dark:text-gray-800 px-3 py-2 text-sm font-semibold text-white shadow-sm rounded-md" 
+                        style={{float:"right"}} 
+                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+                {theme === "dark" ? "🌞 light모드로 변환" : "🌚 dark모드로 변환"}</button>
+            </h3>
+            <input className="px-3 py-2 text-sm shadow-sm rounded-md w-1/2 ring-gray-300 dark:ring-gray-900 ring-1 ring-inset"
+                    placeholder="질문을 입력하고 질문하기 버튼을 클릭하세요."
+                    onChange={(e) => handleQuestion(e)} value={question} />
+            <button className="mx-1 bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm rounded-md disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
+                    onClick={postChatAPI} 
+                    disabled={!question}>질문하기</button>
+            <p className="my-3">
             {!messages &&  "질문을 입력해주세요."}
             {messages.map( (message, index) => (
-                <div key={index} className="flex">
-                    <div>{message.role}</div>
-                    <MemoizedReactMarkdown key={index}>{message.content}</MemoizedReactMarkdown>
-                    </div>)
+                <div key={index} className="flex border-t border-gray-200 dark:border-gray-700 py-3">
+                    <p className="w-1/6 text-indigo-600 py-2 px-3">{message.role}</p>
+                    <p className="w-5/6 px-3 py-2 bg-gray-100 dark:bg-gray-600 rounded-md">
+                        <MemoizedReactMarkdown key={index}>{message.content}</MemoizedReactMarkdown>
+                    </p>
+                </div>)
             )}
             </p>
-      </>
+        </div>
     )
 }
