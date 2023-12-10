@@ -1,13 +1,20 @@
 'use client'
 
 import { useTheme } from "next-themes"
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, CSSProperties } from "react";
 import { MemoizedReactMarkdown } from "@/components/shared/Markdown";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 type Chat = {
-    role: "user" | "assistant";
+    role: "User" | "Assistant";
     content: string;
 }
+
+const override: CSSProperties = {
+    display: "block",
+    margin: "0 auto",
+    height: "20px",
+};
 
 export default function Home() {
     const { theme, setTheme } = useTheme();
@@ -15,6 +22,9 @@ export default function Home() {
     const [question, setQuestion] = useState("");
 
     const [ messages, setMessages ] = useState<Chat[]>([]);
+
+    let [loading, setLoading] = useState(false);
+    let [color, setColor] = useState("#ffffff");
 
     //console.log("theme", theme);
     // 테마는 변경이 되는데, 클래스네임이 반영이 안되네...
@@ -36,6 +46,7 @@ export default function Home() {
     function postChatAPI() {
         console.log(question);
         //setMessage("");
+        setLoading(true);
 
         (async () => {
             const response = await fetch("/api/chat", {
@@ -60,7 +71,9 @@ export default function Home() {
             if(!reader) return;
     
             while (true) {
-              
+              setQuestion("");
+              setLoading(false);
+
               const { done, value } = await reader.read();
     
               if(done) {
@@ -73,8 +86,8 @@ export default function Home() {
               //setMessage((v) => v + decodedValue);
               setMessages([
                 ...messages,
-                {role : 'user', content : question},
-                {role : 'assistant', content : content}
+                {role : 'User', content : question},
+                {role : 'Assistant', content : content}
               ]);
             }
     
@@ -89,12 +102,20 @@ export default function Home() {
                         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
                 {theme === "dark" ? "🌞 light모드로 변환" : "🌚 dark모드로 변환"}</button>
             </h3>
-            <input className="px-3 py-2 text-sm shadow-sm rounded-md w-1/2 ring-gray-300 dark:ring-gray-900 ring-1 ring-inset"
-                    placeholder="질문을 입력하고 질문하기 버튼을 클릭하세요."
-                    onChange={(e) => handleQuestion(e)} value={question} />
-            <button className="mx-1 bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm rounded-md disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
-                    onClick={postChatAPI} 
-                    disabled={!question}>질문하기</button>
+            <div className="flex">
+                <input className="px-3 py-2 text-sm shadow-sm rounded-md w-1/2 ring-gray-300 dark:ring-gray-900 ring-1 ring-inset"
+                        placeholder="질문을 입력하고 질문하기 버튼을 클릭하세요."
+                        onChange={(e) => handleQuestion(e)} value={question} />
+                <button className="w-20 mx-1 bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm rounded-md disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
+                        onClick={postChatAPI} 
+                        disabled={!question || loading}>
+                    <ScaleLoader 
+                        color={color}
+                        loading={loading}
+                        cssOverride={override}
+                        height={15}
+                        aria-label="Loading Spinner" />{!loading && "질문하기"}</button>
+            </div>
             <p className="my-3">
             {!messages &&  "질문을 입력해주세요."}
             {messages.map( (message, index) => (
