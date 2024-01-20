@@ -26,9 +26,6 @@ export default function Home() {
     let [loading, setLoading] = useState(false);
     let [color, setColor] = useState("#ffffff");
 
-    //console.log("theme", theme);
-    // 테마는 변경이 되는데, 클래스네임이 반영이 안되네...
-
     // async는 useEffect에서 사용할 수 없음
     // 즉시 실행 함수에 감싸 사용해야 함
 
